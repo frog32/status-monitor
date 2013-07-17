@@ -14,19 +14,16 @@ class Widget(BaseWidget):
     base_config = {
         'username': '',
         'password': '',
+        'count': 5,
     }
 
     def __init__(self, *args, **kwargs):
         super(Widget, self).__init__(*args, **kwargs)
         self.cookies = {}
+        self.last_data = []
 
-    def get_widgets(self):
-        return [self]
-
-    def render_base(self):
-        return '<div id="widget-%s" class="widget"></div>' % self.id
-
-    # def initialize(self, client):
+    def initialize(self, client):
+        self.message_to_client(client, 'update', self.last_data)
 
     @defer.inlineCallbacks
     def register_backend(self):
@@ -61,9 +58,15 @@ class Widget(BaseWidget):
     @defer.inlineCallbacks
     def update(self):
         try:
-            data = yield getPage("%sapi/itcrowd/groups/trends/?minutes=1440&limit=5" % self.config['url'], cookies=self.cookies)
+            data = yield getPage("%sapi/itcrowd/groups/trends/?minutes=1440&limit=%s" % (self.config['url'], self.config['count']), cookies=self.cookies)
         except Exception:
             raise
         data = json.loads(data)
-        update = [{'project': e['project']['name'], 'count': e['count']} for e in data]
+        update = [{
+            'project': e['project']['name'],
+            'count': e['count'],
+            'message': e['message'],
+            'level': e['levelName'],
+        } for e in data]
         self.message_broadcast('update', update)
+        self.last_data = update

@@ -11,9 +11,6 @@ class Widget(BaseWidget):
         super(Widget, self).__init__(*args, **kwargs)
         self.subwidgets = [self.widget_manager.get_widget_instance(*a) for a in self.args]
 
-    def get_widgets(self):
-        return [self]
-
     def render_base(self):
         subwidgets = ''.join(widget.render_base() for widget in self.subwidgets)
         return '<div id="widget-%s" class="widget">%s</div>' % (self.id, subwidgets)

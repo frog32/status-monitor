@@ -1,3 +1,5 @@
+window.JST = {};
+
 StatusMonitor = Backbone.View.extend({
   initialize: function(){
     this.sock = new SockJS('/ws/');
@@ -93,12 +95,48 @@ ClockWidget = WidgetBase.extend({
 
 status_monitor.register_widget_class('clock', ClockWidget);
 
+// sentry
+
+/*jshint multistr:true */
+window.JST['sentry/errors'] = _.template(
+    '<ul><% _.each( error_list, function( item ){ %>\
+        <li>\
+          <div class="count"><span><%= item.count %></span></div>\
+          <h3><%- item.project %></h3>\
+          <p><%= item.message %></p>\
+        </li>\
+            <% }); %></ul>'
+);
+
+
 SentryWidget = WidgetBase.extend({
   on_message: function(type, data){
     if(type == 'update'){
-      this.$el.html(data);
+      this.$el.html(JST['sentry/errors']({error_list:data}));
     }
   }
 });
 
 status_monitor.register_widget_class('sentry', SentryWidget);
+
+
+window.JST['travis/repositorys'] = _.template(
+    '<ul><% _.each( repositorys, function( item ){ %>\
+        <li class="<%= item.last_build_state %>">\
+          <h3><%- item.slug %> <span class="build-nr"><%= item.last_build_number %></span></h3>\
+        </li>\
+            <% }); %></ul>'
+);
+
+
+TravisWidget = WidgetBase.extend({
+  repositorys:{},
+  on_message: function(type, data){
+    if(type == 'update'){
+      this.repositorys[data["id"]] = data
+      this.$el.html(JST['travis/repositorys']({repositorys:this.repositorys}));
+    }
+  }
+});
+
+status_monitor.register_widget_class('travis', TravisWidget);

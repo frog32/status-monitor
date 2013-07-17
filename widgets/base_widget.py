@@ -13,9 +13,6 @@ class BaseWidget(object):
         self.args = args
         widget_manager.widgets.append(self)
 
-    def get_widgets(self):
-        return [self]
-
     def initialize(self, client):
         """initialize this widget on a new client"""
 
@@ -32,4 +29,4 @@ class BaseWidget(object):
         pass
 
     def render_base(self):
-        return '<div class="widget" id="widget-%s"></div>' % self.id
+        return '<div class="widget %s" id="widget-%s"></div>' % (self.name, self.id)
