@@ -10,25 +10,40 @@ html, body {
 .widget {
 	width:100%;
 	height: 100%;
-	text-align: center;
 	font-size: 100%;
 }
 
 ul{
 	list-style: none inside none;
+	margin: 0;
+	padding: 0;
 }
 
 /* sentry */
+.sentry ul{
+	padding-left: 50px;
+}
+.sentry li{
+	height: 50px;
+}
 .sentry .count{
+	position: absolute;
+	left: 0;
 	width: 40px;
 	height: 40px;
 	background-color: red;
 	border-radius: 20px;
-	float: left;
+	text-align: center;
+	line-height: 40px;
+	font-weight: bold;
 }
-
-.sentry .count span{
-	vertical-align: middle;
+.sentry h3{
+	margin:0;
+}
+.sentry .description{
+	overflow:hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 /* travis */
@@ -37,4 +52,7 @@ ul{
 }
 .travis .failed h3{
 	color: red;
+}
+.travis .started h3{
+	color: yellow;
 }

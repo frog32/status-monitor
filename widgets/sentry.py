@@ -15,6 +15,7 @@ class Widget(BaseWidget):
         'username': '',
         'password': '',
         'count': 5,
+        'update_rate': 60,
     }
 
     def __init__(self, *args, **kwargs):
@@ -53,7 +54,7 @@ class Widget(BaseWidget):
             raise
 
         self.task = task.LoopingCall(self.update)
-        self.task.start(30)
+        self.task.start(self.config["update_rate"])
 
     @defer.inlineCallbacks
     def update(self):

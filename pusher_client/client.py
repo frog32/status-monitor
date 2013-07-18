@@ -104,8 +104,8 @@ class PusherClientFactory(WebSocketClientFactory):
 
     def __init__(self, api_key, use_ssl=True, debug=False, **kwargs):
         self.debug = debug
-        client_name = 'js'
-        client_version = '2.0.4'
+        client_name = 'twistedPusher'
+        client_version = '0.1'
         proto = use_ssl and 'wss' or 'ws'
         port = use_ssl and 443 or 80
         url = '%s://ws.pusherapp.com:%s/app/%s?client=%s&version=%s&protocol=6&flash=false' % (proto, port, api_key, client_name, client_version)

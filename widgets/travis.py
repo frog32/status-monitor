@@ -1,6 +1,5 @@
 import json
 
-from twisted.internet.defer import DeferredList
 from twisted.web.client import getPage
 from twisted.internet import defer, task
 from widgets.base_widget import BaseWidget
@@ -34,6 +33,7 @@ class Widget(BaseWidget):
         for repo in self.repositorys.values():
             self.message_to_client(client, 'update', repo)
 
+    @defer.inlineCallbacks
     def api(self, path, method='GET', data={}):
         kwargs = {}
         headers = {'Accept': 'application/json; version=2'}
@@ -42,14 +42,16 @@ class Widget(BaseWidget):
             headers['Content-Type'] = 'application/json; charset=utf-8'
         if self.access_token:
             headers['Authorization'] = 'token %s' % self.access_token
-        return getPage("%s%s" % (self.config["api_url"], path),
-                       method=method,
-                       headers=headers,
-                       **kwargs)
+        data = yield getPage("%s%s" % (self.config["api_url"], path),
+                             method=method,
+                             headers=headers,
+                             **kwargs)
+        obj = json.loads(data)
+        defer.returnValue(obj)
 
     def on_repo_event(self, event, channel, data):
         print data
-        self.update_repo(data["build"]["repository"])
+        self.update_repo(data["repository"])
 
     def on_user_event(self, event, channel, data):
         print "user event", event, channel, data
@@ -62,7 +64,6 @@ class Widget(BaseWidget):
             data = yield self.api("config")
         except Exception:
             raise
-        data = json.loads(data)
         self.pusher_key = data["config"]["pusher"]["key"]
 
         # authenticate travis
@@ -74,7 +75,6 @@ class Widget(BaseWidget):
                                   })
         except Exception:
             raise
-        data = json.loads(data)
         self.access_token = data["access_token"]
 
         # get user info
@@ -82,7 +82,6 @@ class Widget(BaseWidget):
             data = yield self.api("users")
         except Exception:
             raise
-        data = json.loads(data)
         self.user = data["user"]
 
         # get repos
@@ -91,7 +90,6 @@ class Widget(BaseWidget):
         except Exception:
             print "fehler beim laden der repos"
             raise
-        data = json.loads(data)
         for repo in data["repos"]:
             self.update_repo(repo)
 
@@ -112,7 +110,6 @@ class Widget(BaseWidget):
                                         })
         except Exception:
             raise
-        data = json.loads(data)
         channels = data["channels"]
         for channel_name, auth in channels.items():
             print "subscribe to %s" % channel_name

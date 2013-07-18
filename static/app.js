@@ -73,10 +73,16 @@ SplitWidget = WidgetBase.extend({
       data.subwidgets.forEach(function(subwidget){
         sm.create_widget_instance(subwidget.name, subwidget.id);
       });
-      if(data.direction == 'vertical'){
-        this.$el.children().css('height', (100 / data.subwidgets.length)+ "%");
+      var property = (data.direction == 'vertical'? 'height': 'width')
+      if(data.ratios){
+        var i;
+        for(i=0; i<data.ratios.length; i++){
+          $(this.$el.children()[i]).css(property, data.ratios[i]);
+        }
       } else {
-        this.$el.children().css('width', (100 / data.subwidgets.length)+ "%");
+        this.$el.children().css(property, (100 / data.subwidgets.length)+ "%");
+      }
+      if(data.direction != 'vertical'){
         this.$el.children().css('float', 'left');
       }
     }
@@ -99,11 +105,12 @@ status_monitor.register_widget_class('clock', ClockWidget);
 
 /*jshint multistr:true */
 window.JST['sentry/errors'] = _.template(
-    '<ul><% _.each( error_list, function( item ){ %>\
+    '<h2>Sentry</h2>\
+    <ul><% _.each( error_list, function( item ){ %>\
         <li>\
-          <div class="count"><span><%= item.count %></span></div>\
+          <div class="count"><%= item.count %></div>\
           <h3><%- item.project %></h3>\
-          <p><%= item.message %></p>\
+          <div class="description"><%= item.message %></div>\
         </li>\
             <% }); %></ul>'
 );
@@ -121,9 +128,11 @@ status_monitor.register_widget_class('sentry', SentryWidget);
 
 
 window.JST['travis/repositorys'] = _.template(
-    '<ul><% _.each( repositorys, function( item ){ %>\
+    '<h2>Travis</h2>\
+    <ul><% _.each( repositorys, function( item ){ %>\
         <li class="<%= item.last_build_state %>">\
           <h3><%- item.slug %> <span class="build-nr"><%= item.last_build_number %></span></h3>\
+          <div class="description"><%- Math.floor(item.last_build_duration/60) %>min <%- item.last_build_duration%60 %>sec <%- item.last_build_finished_at %></div>\
         </li>\
             <% }); %></ul>'
 );
@@ -140,3 +149,20 @@ TravisWidget = WidgetBase.extend({
 });
 
 status_monitor.register_widget_class('travis', TravisWidget);
+
+window.JST['github/repos'] = _.template(
+    '<h2>Gihtub</h2>\
+    <div>Public Repos <%- data.public_repos %></div>\
+    <div>Private Repos <%- data.private_repos %></div>'
+);
+
+
+GithubWidget = WidgetBase.extend({
+  on_message: function(type, data){
+    if(type == 'update'){
+      this.$el.html(JST['github/repos']({data: data}));
+    }
+  }
+});
+
+status_monitor.register_widget_class('github', GithubWidget);
