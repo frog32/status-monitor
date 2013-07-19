@@ -11,12 +11,26 @@ html, body {
 	width:100%;
 	height: 100%;
 	font-size: 100%;
+	padding: 10px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	position: relative;
+	overflow: hidden;
+}
+
+h2{
+	margin-top:0;
 }
 
 ul{
 	list-style: none inside none;
 	margin: 0;
 	padding: 0;
+}
+
+/* split */
+.widget.split{
+	padding:0;
 }
 
 /* sentry */
@@ -28,7 +42,7 @@ ul{
 }
 .sentry .count{
 	position: absolute;
-	left: 0;
+	left: 10px;
 	width: 40px;
 	height: 40px;
 	background-color: red;
@@ -48,7 +62,7 @@ ul{
 
 /* travis */
 .travis .passed h3{
-	color: green;
+	color: lime;
 }
 .travis .failed h3{
 	color: red;
@@ -56,3 +70,7 @@ ul{
 .travis .started h3{
 	color: yellow;
 }
+.travis .errored h3{
+	color: orange;
+}
+

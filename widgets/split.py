@@ -14,7 +14,7 @@ class Widget(BaseWidget):
 
     def render_base(self):
         subwidgets = ''.join(widget.render_base() for widget in self.subwidgets)
-        return '<div id="widget-%s" class="widget">%s</div>' % (self.id, subwidgets)
+        return '<div id="widget-%s" class="widget %s">%s</div>' % (self.id, self.name, subwidgets)
 
     def initialize(self, client):
         self.message_to_client(client, 'initialize', {'subwidgets': [{'name': s.name, 'id': s.id} for s in self.subwidgets], 'direction': self.config['direction'], 'ratios': self.config['ratios']})

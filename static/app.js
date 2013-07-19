@@ -151,7 +151,7 @@ TravisWidget = WidgetBase.extend({
 status_monitor.register_widget_class('travis', TravisWidget);
 
 window.JST['github/repos'] = _.template(
-    '<h2>Gihtub</h2>\
+    '<h2>Github</h2>\
     <div>Public Repos <%- data.public_repos %></div>\
     <div>Private Repos <%- data.private_repos %></div>'
 );
