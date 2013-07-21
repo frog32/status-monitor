@@ -1,10 +1,8 @@
 import json
 import re
-import urllib
 
 from twisted.web.client import getPage
 from twisted.internet import defer, task
-from twisted.python.failure import Failure
 from widgets.base_widget import BaseWidget
 
 CSRF_RE = re.compile(r"name='csrfmiddlewaretoken' value='([A-Za-z0-9]+)'")
@@ -21,7 +19,6 @@ class Widget(BaseWidget):
 
     def __init__(self, *args, **kwargs):
         super(Widget, self).__init__(*args, **kwargs)
-        self.cookies = {}
         self.last_data = {}
 
     def initialize(self, client):
