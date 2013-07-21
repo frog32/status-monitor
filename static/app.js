@@ -142,7 +142,7 @@ TravisWidget = WidgetBase.extend({
   repositorys:{},
   on_message: function(type, data){
     if(type == 'update'){
-      this.repositorys[data["id"]] = data
+      this.repositorys[data["id"]] = data;
       this.$el.html(JST['travis/repositorys']({repositorys:this.repositorys}));
     }
   }
@@ -156,7 +156,6 @@ window.JST['github/repos'] = _.template(
     <div>Private Repos <%- data.private_repos %></div>'
 );
 
-
 GithubWidget = WidgetBase.extend({
   on_message: function(type, data){
     if(type == 'update'){
@@ -166,3 +165,24 @@ GithubWidget = WidgetBase.extend({
 });
 
 status_monitor.register_widget_class('github', GithubWidget);
+
+
+window.JST['statuscake'] = _.template(
+    '<h2>Up/Down</h2>\
+    <div>Up <%- data.tests_up %></div>\
+    <div>Down <%- data.tests_down %></div>\
+    <div>Uptime <%- data.uptime %></div>\
+    <ul><% _.each( data.failures, function( site ){ %>\
+      <li><%- site.WebsiteName %></li>\
+    <% }); %></ul>'
+);
+
+StatuscakeWidget = WidgetBase.extend({
+  on_message: function(type, data){
+    if(type == 'update'){
+      this.$el.html(JST['statuscake']({data: data}));
+    }
+  }
+});
+
+status_monitor.register_widget_class('statuscake', StatuscakeWidget);
