@@ -2,8 +2,10 @@ import json
 import re
 import urllib
 
+from twisted.internet import defer, task, error
+from twisted.python import log
 from twisted.web.client import getPage
-from twisted.internet import defer, task
+
 from widgets.base_widget import BaseWidget
 
 CSRF_RE = re.compile(r"name='csrfmiddlewaretoken' value='([A-Za-z0-9]+)'")
@@ -60,8 +62,9 @@ class Widget(BaseWidget):
     def update(self):
         try:
             data = yield getPage("%sapi/itcrowd/groups/trends/?minutes=1440&limit=%s" % (self.config['url'], self.config['count']), cookies=self.cookies)
-        except Exception:
-            raise
+        except error.TimeoutError:
+            log.msg("SentryWidget: connection timeout")
+            return
         data = json.loads(data)
         update = [{
             'project': e['project']['name'],

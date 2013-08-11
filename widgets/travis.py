@@ -1,7 +1,9 @@
 import json
 
+from twisted.internet import defer
+from twisted.python import log
 from twisted.web.client import getPage
-from twisted.internet import defer, task
+
 from widgets.base_widget import BaseWidget
 
 from pusher_client.client import connectPusher
@@ -94,7 +96,6 @@ class Widget(BaseWidget):
             self.update_repo(repo)
 
         # connect pusher
-        print self.pusher_key
         try:
             self.pusher_protocol = yield connectPusher(self.pusher_key, debug=True)
         except Exception:
@@ -112,7 +113,7 @@ class Widget(BaseWidget):
             raise
         channels = data["channels"]
         for channel_name, auth in channels.items():
-            print "subscribe to %s" % channel_name
+            log.msg("TravisWidget: subscribe to %s" % channel_name)
             channel = self.pusher_protocol.subscribe(channel_name, auth=auth)
             if channel.name.startswith("private-user-"):
                 channel.addObserver(None, self.on_user_event)
