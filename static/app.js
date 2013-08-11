@@ -73,7 +73,7 @@ SplitWidget = WidgetBase.extend({
       data.subwidgets.forEach(function(subwidget){
         sm.create_widget_instance(subwidget.name, subwidget.id);
       });
-      var property = (data.direction == 'vertical'? 'height': 'width')
+      var property = (data.direction == 'vertical'? 'height': 'width');
       if(data.ratios){
         var i;
         for(i=0; i<data.ratios.length; i++){
@@ -132,19 +132,30 @@ window.JST['travis/repositorys'] = _.template(
     <ul><% _.each( repositorys, function( item ){ %>\
         <li class="<%= item.last_build_state %>">\
           <h3><%- item.slug %> <span class="build-nr"><%= item.last_build_number %></span></h3>\
-          <div class="description"><%- Math.floor(item.last_build_duration/60) %>min <%- item.last_build_duration%60 %>sec <%- item.last_build_finished_at %></div>\
+            <div class="description">\
+              <span class="duration"><%- Math.floor(item.last_build_duration/60) %>min <%- item.last_build_duration%60 %>sec</span>\
+              <span class="time"><% if(item.last_build_finished_at){ %><%= moment(item.last_build_finished_at).fromNow() %><% } %></span>\
+          </div>\
         </li>\
-            <% }); %></ul>'
+      <% }); %>\
+    </ul>'
 );
 
 
 TravisWidget = WidgetBase.extend({
   repositorys:{},
+  timer: null,
   on_message: function(type, data){
     if(type == 'update'){
       this.repositorys[data["id"]] = data;
-      this.$el.html(JST['travis/repositorys']({repositorys:this.repositorys}));
+      if(this.timer === null){
+        this.timer = window.setInterval($.proxy(this.render, this), 1000*30);
+      }
+      this.render();
     }
+  },
+  render: function(){
+    this.$el.html(JST['travis/repositorys']({repositorys:this.repositorys}));
   }
 });
 

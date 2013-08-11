@@ -61,6 +61,12 @@ ul{
 }
 
 /* travis */
+.travis li{
+       margin: 20px 0;
+}
+.travis h3{
+       margin: 10px 0;
+}
 .travis .passed h3{
 	color: lime;
 }
@@ -73,4 +79,9 @@ ul{
 .travis .errored h3{
 	color: orange;
 }
-
+.travis .duration{
+       display: inline-block;
+       width: 150px;
+}
+.travis .time{
+}

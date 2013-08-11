@@ -25,6 +25,7 @@ class WidgetManager(service.Service):
         '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js',
         '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js',
         '//cdnjs.cloudflare.com/ajax/libs/sockjs-client/0.3.4/sockjs.min.js',
+        '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.1.0/moment.min.js',
         '/static/app.js',
     )
     css_include = (
