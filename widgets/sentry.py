@@ -3,6 +3,7 @@ import re
 import urllib
 
 from twisted.internet import defer, task, error
+from twisted.web.error import Error as TwistedWebError
 from twisted.python import log
 from twisted.web.client import getPage
 
@@ -64,6 +65,8 @@ class Widget(BaseWidget):
             data = yield getPage("%sapi/itcrowd/groups/trends/?minutes=1440&limit=%s" % (self.config['url'], self.config['count']), cookies=self.cookies)
         except error.TimeoutError:
             log.msg("SentryWidget: connection timeout")
+            return
+        except TwistedWebError:
             return
         data = json.loads(data)
         update = [{
