@@ -4,9 +4,11 @@ from twisted.web.resource import Resource
 from txsockjs.factory import SockJSResource
 
 from widget_manager import WidgetManager
-from config import MONITOR
+from aggregator_hub import AggregatorHub
+from config import AGGREGATORS, MONITOR
 
-widget_manager = WidgetManager(MONITOR)
+aggregator_hub = AggregatorHub(AGGREGATORS)
+widget_manager = WidgetManager(MONITOR, aggregator_hub)
 
 static_path = os.path.join(os.path.dirname(__file__), 'static')
 

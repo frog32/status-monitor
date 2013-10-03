@@ -43,9 +43,10 @@ class WidgetManager(service.Service):
     </body>
 </html>"""
 
-    def __init__(self, config):
+    def __init__(self, config, aggregator_hub):
         self.last_id = 0
         self.config = config
+        self.aggregator_hub = aggregator_hub
         self.sm_factory = StatusMonitorFactory(self)
         self.widgets = []
 
@@ -56,13 +57,12 @@ class WidgetManager(service.Service):
     def startService(self):
         self.running = 1
         self.root = self.get_widget_instance(*self.config)
-        for w in self.widgets:
-            # todo: durch service mechanik ersetzen
-            reactor.callWhenRunning(w.register_backend)
 
     def get_widget_instance(self, name, config, *args):
         widget_class = self.load_widget(name)
-        return widget_class(self, config, *args)
+        instance = widget_class(self, config, *args)
+        instance.register(self.aggregator_hub)
+        return instance
 
     def load_widget(self, name):
         mod = __import__('widgets.%s' % (name,), globals(), locals(), ['Widget'], 0)

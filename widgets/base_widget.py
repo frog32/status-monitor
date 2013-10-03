@@ -16,6 +16,9 @@ class BaseWidget(object):
     def initialize(self, client):
         """initialize this widget on a new client"""
 
+    def register(self, aggregator_hub):
+        """register all needed callbacks on aggregators"""
+
     def message_to_client(self, client, message_type, data):
         message = {'target': self.id, 'type': message_type, 'data': data}
         client.transport.write(message)
