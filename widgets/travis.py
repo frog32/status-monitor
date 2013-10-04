@@ -1,4 +1,5 @@
 from widgets.base_widget import BaseWidget
+from operator import itemgetter
 
 
 class Widget(BaseWidget):
@@ -6,7 +7,7 @@ class Widget(BaseWidget):
 
     def __init__(self, *args, **kwargs):
         super(Widget, self).__init__(*args, **kwargs)
-        self.repositorys = {}
+        self.repositorys = []
 
     def register(self, aggregator_hub):
         aggregator = aggregator_hub.get('travis')
@@ -16,9 +17,12 @@ class Widget(BaseWidget):
         new_repo = {}
         for f in ("id", "slug", "last_build_state", "last_build_finished_at", "last_build_number", "last_build_duration"):
             new_repo[f] = repo_data[f]
-        self.repositorys[repo_data["id"]] = new_repo
-        self.message_broadcast("update", new_repo)
+        for repo in self.repositorys:
+            if repo["id"] == new_repo["id"]:
+                self.repositorys.remove(repo)
+        self.repositorys.append(new_repo)
+        self.repositorys = sorted(self.repositorys, key=itemgetter('last_build_finished_at'), reverse=True)
+        self.message_broadcast("update", self.repositorys)
 
     def initialize(self, client):
-        for repo in self.repositorys.values():
-            self.message_to_client(client, 'update', repo)
+        self.message_to_client(client, 'update', self.repositorys)

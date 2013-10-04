@@ -147,7 +147,7 @@ TravisWidget = WidgetBase.extend({
   timer: null,
   on_message: function(type, data){
     if(type == 'update'){
-      this.repositorys[data["id"]] = data;
+      this.repositorys = data;
       if(this.timer === null){
         this.timer = window.setInterval($.proxy(this.render, this), 1000*30);
       }
