@@ -57,6 +57,9 @@ class WidgetManager(service.Service):
     def startService(self):
         self.running = 1
         self.root = self.get_widget_instance(*self.config)
+        for w in self.widgets:
+            # todo: durch service mechanik ersetzen
+            reactor.callWhenRunning(w.register_backend)
 
     def get_widget_instance(self, name, config, *args):
         widget_class = self.load_widget(name)
