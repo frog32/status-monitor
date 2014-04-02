@@ -48,7 +48,7 @@ class Aggregator(BaseAggregator):
             "tests_total": len(tests),
             "tests_down": len(filter(lambda x: x["Status"] == "Down", tests)),
             "tests_up": len(filter(lambda x: x["Status"] == "Up", tests)),
-            "uptime": sum(map(lambda x: x["Uptime"], tests)),
+            "uptime": sum(map(lambda x: x["Uptime"], tests)) / float(len(tests)),
         }
         if update != self.last_data:
             self.call('update', update)
